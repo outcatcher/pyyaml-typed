@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "tyaml"
+version = "0.1.0"
+description = "PyYAML dumper/loader using field descriptions in class comments"
+authors = ["Anton Kachurin <katchuring@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/outcatcher/tyaml"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+pyyaml = "^5.3"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.3.4"
+coverage = "^5.0.3"
+
+[build-system]
+requires = ["poetry>=1.0"]
+build-backend = "poetry.masonry.api"
