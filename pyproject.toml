@@ -1,11 +1,14 @@
 [tool.poetry]
-name = "tyaml"
+name = "pyyaml-typed"
 version = "0.1.0"
 description = "PyYAML dumper/loader using field descriptions in class comments"
 authors = ["Anton Kachurin <katchuring@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-repository = "https://github.com/outcatcher/tyaml"
+repository = "https://github.com/outcatcher/pyyaml-typed"
+packages = [
+    { include = "tyaml" },
+]
 
 [tool.poetry.dependencies]
 python = "^3.7"
