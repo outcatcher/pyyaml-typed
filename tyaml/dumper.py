@@ -3,7 +3,7 @@ from yaml import Dumper
 from tyaml.types import get_mappings
 
 
-class SpecialDumper(Dumper):
+class SpecialDumper(Dumper):  # pylint: disable=too-many-ancestors
     """Dumper overriding standard `represent_object` method"""
 
     def represent_object(self, data):

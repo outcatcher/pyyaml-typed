@@ -17,6 +17,8 @@ pyyaml = "^5.3"
 [tool.poetry.dev-dependencies]
 pytest = "^5.3.4"
 coverage = "^5.0.3"
+pylint = "^2.4.4"
+pylint-quotes = "^0.2.1"
 
 [build-system]
 requires = ["poetry>=1.0"]
