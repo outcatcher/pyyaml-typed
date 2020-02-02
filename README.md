@@ -1,5 +1,7 @@
 # pyyaml-typed
-![GitHub](https://img.shields.io/github/license/outcatcher/yaypl)
+[![Build Status](https://travis-ci.org/outcatcher/pyyaml-typed.svg?branch=master)](https://travis-ci.org/outcatcher/pyyaml-typed)
+[![codecov](https://codecov.io/gh/outcatcher/pyyaml-typed/branch/master/graph/badge.svg)](https://codecov.io/gh/outcatcher/pyyaml-typed)
+![GitHub](https://img.shields.io/github/license/outcatcher/pyyaml-typed)
 
 Library providing `dump` and `load` functions for pyyaml supporting `go-yaml`-like
 description of yaml fields as class comments
