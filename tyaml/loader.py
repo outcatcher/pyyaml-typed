@@ -44,7 +44,6 @@ def _add_single_cls_loader(typ, loader: Type[FullLoader], base_path: list):
     loader.add_path_resolver(tag, base_path[:], MappingNode)
 
     if hasattr(typ, "__annotations__"):
-        pass
         # go deeper
         for field, f_typ in typ.__annotations__.items():
             if f_typ in [str, int, float]:

@@ -1,0 +1,24 @@
+dist: bionic
+language: python
+cache: pip
+python:
+- '3.7'
+stages:
+- test
+- name: pypi
+  if: tag IS present
+install:
+- pip3 install poetry
+- pip3 install pylint-exit
+- poetry install
+jobs:
+  fast_finish: true
+  include:
+  - stage: test
+    script:
+    - pylint tyaml || pylint-exit $? -wfail -efail
+    - pytest --cov-report xml --cov tyaml
+    - codecov
+  - stage: pypi
+    name: Deploy to PyPi
+    script: poetry publish --build -u $PYPI_USERNAME -p $PYPI_PASSWORD

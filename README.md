@@ -28,3 +28,13 @@ will create yaml:
 - my_fld_1: 2
   my_fld_2: "nice"
 ```
+
+and in the other direction: 
+```python
+from typing import List
+
+from tyaml import load
+
+loaded = load(yml_str, List[Something])
+loaded == [Something(1, "that's"), Something(2, "nice")]
+```
