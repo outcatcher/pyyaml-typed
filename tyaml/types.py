@@ -19,8 +19,6 @@ def _get_container_fields(cls):
 @functools.lru_cache(maxsize=64, typed=True)
 def get_mappings(cls) -> dict:
     """Get `class field`: `yaml field` mapping for a class"""
-    if inspect.isbuiltin(cls):
-        return {}
     _fields = _get_container_fields(cls)
 
     try:

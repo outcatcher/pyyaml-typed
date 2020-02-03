@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pyyaml-typed"
-version = "0.1.0"
+version = "0.1.1"
 description = "PyYAML dumper/loader using field descriptions in class comments"
 authors = ["Anton Kachurin <katchuring@gmail.com>"]
 license = "MIT"

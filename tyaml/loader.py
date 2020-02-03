@@ -1,8 +1,7 @@
 from copy import deepcopy
-from dataclasses import is_dataclass
 from typing import Any, Type, Union, _GenericAlias, _SpecialForm
 
-from yaml import CollectionNode, FullLoader, MappingNode, SequenceNode
+from yaml import FullLoader, MappingNode, SequenceNode
 
 from tyaml.types import get_mappings
 
@@ -26,7 +25,11 @@ def _real_cls(cls: TypeOrGeneric) -> type:
 
 def __kwarg_constructor(loader, node, typ, fld_mappings):
     fields = loader.construct_mapping(node, True)
-    kwargs = {cls_field: fields[yml_field] for cls_field, yml_field in fld_mappings.items()}
+    kwargs = {
+        cls_field: fields[yml_field]
+        for cls_field, yml_field in fld_mappings.items()
+        if yml_field in fields  # Optional[...] fields
+    }
     return typ(**kwargs)
 
 
@@ -35,7 +38,10 @@ def _type_tag(typ):
 
 
 def _add_single_cls_loader(typ, loader: Type[FullLoader], base_path: list):
-    tag = _type_tag(typ)
+    try:
+        tag = _type_tag(typ)
+    except AttributeError:
+        return
     field_mappings = get_mappings(typ)
     if not field_mappings:
         return
@@ -53,34 +59,32 @@ def _add_single_cls_loader(typ, loader: Type[FullLoader], base_path: list):
             _add_path_resolvers(f_typ, loader, el_path)
 
 
-def _add_complex_resolver(typ, loader: Type[FullLoader], base_path: list, node_type: Type[CollectionNode]):
-    item_types = [typ]
-    base_path = base_path[:]
-    base_path.append((node_type, False))
-    if hasattr(typ, "__origin__"):
-        if typ.__origin__ is Union:  # Union or Optional
-            item_types.extend(typ.__args__)
-        raise ValueError(f"Only top-level generics are allowed, but {typ} was given")
-    if typ in item_types:
-        _add_single_cls_loader(typ, loader, base_path)
-
-
 def _add_path_resolvers(typ: TypeOrGeneric, loader: Type[FullLoader], base_path: list = None):
     if base_path is None:
         base_path = []
+    else:
+        base_path = base_path[:]
     if _is_generic(typ):
         args = typ.__args__
-        if not args:
-            return  # can't create new path resolver for generic without arguments
         typ = _real_cls(typ)  # convert typing generics to class
+        if typ is Union:
+            if len(args) == 2 and issubclass(args[1], type(None)):  # given type is Optional
+                _add_single_cls_loader(args[0], loader, base_path)
+                return
+            else:
+                raise TypeError(f"Only Optional[...] is allowed but"
+                                f"Union[{', '.join(t.__name__ for t in args)}] was given")
         if typ in [list, tuple, set, frozenset]:
             el_type = args[0]  # type: type
-            _add_complex_resolver(el_type, loader, base_path, SequenceNode)
+            base_path.append((SequenceNode, False))
+            _add_path_resolvers(el_type, loader, base_path)
+            return
         if issubclass(typ, dict):
             el_type = args[1]
-            _add_complex_resolver(el_type, loader, base_path, MappingNode)
-    if is_dataclass(typ) or hasattr(typ, "_fields"):
-        _add_single_cls_loader(typ, loader, base_path)
+            base_path.append((MappingNode, False))
+            _add_path_resolvers(el_type, loader, base_path)
+            return
+    _add_single_cls_loader(typ, loader, base_path)
 
 
 def special_loader(as_type: type) -> Type[FullLoader]:
