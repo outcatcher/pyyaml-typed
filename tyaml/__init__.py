@@ -1,4 +1,8 @@
 import logging
+from typing import (
+    Type as __Type,
+    TypeVar as __TypeVar
+)
 
 import yaml
 
@@ -20,6 +24,9 @@ def dump(data, stream=None, **kwargs):
     return yaml.dump(data, stream, Dumper=__SpecialDumper, **kwargs)
 
 
-def load(stream, as_type: __TypeOrGeneric):
+T = __TypeVar("T")
+
+
+def load(stream, as_type: __Type[T]) -> T:
     """Load yaml"""
     return yaml.load(stream, Loader=__special_loader(as_type))
